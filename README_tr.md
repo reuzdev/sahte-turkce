@@ -19,7 +19,7 @@ Sahte Türkçe kulağa Türkçe gelen sahte kelimeler oluşturmaya yarayan bir w
 
 ### Hızlı Başlangıç
 - `npm install` - Repo'yu klonladıktan sonra bir kez yapın.
-- `npm run model-gen` - Model ve istatistikleri manuel olarak oluşturun. Gerektiğinde otomatik çağrılır.
+- `npm run model-gen` - Model ve istatistikleri oluşturun.
 - `npm run dev` - Sıcak geriyüklemeli (hot-reloading) geliştirici sunucusu çalıştırın.
 - `npm run build` - Projeyi derleyin.
 

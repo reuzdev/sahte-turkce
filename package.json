@@ -5,9 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "predev": "python src/scripts/generateModel.py",
     "build": "vite build",
-    "prebuild": "python src/scripts/generateModel.py",
     "preview": "vite preview",
     "model-gen": "python src/scripts/generateModel.py"
   },
