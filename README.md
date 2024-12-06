@@ -19,7 +19,7 @@ Sahte Türkçe (en: Fake Turkish) is a web tool for generating fake words that s
 
 ### Quick Start
 - `npm install` - Do only once after cloning the repository.
-- `npm run model-gen` - Manually generate the model and stats. Automatically called when necessary.
+- `npm run model-gen` - Manually generate the model and stats.
 - `npm run dev` - Run dev server with hot-reloading.
 - `npm run build` - Build the project.
 
