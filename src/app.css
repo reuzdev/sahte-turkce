@@ -1,0 +1,65 @@
+/*css reset from https://www.codu.co/articles/a-simple-and-minimal-css-reset-xc7ypizf*/
+
+@import url('https://fonts.googleapis.com/css2?family=Readex+Pro&family=Roboto:wght@500&display=swap');
+
+:root {
+    font-size: 12px;
+
+    --color-bg-a: #201F28;
+    --color-bg-b: #1B1A22;
+    --color-bg-b-border: #312C37;
+    --color-purple: #693E7E;
+    --color-purple-border: #9861B3;
+    --color-purple-darker: #5f3871;
+    --color-purple-lighter: #78518b;
+    --color-whiteish: #fff;
+    --color-green: #58F963;
+    --color-red: #F95858;
+    --color-secondary-text-a: #B4B4B4;
+    --color-secondary-text-b: #4D4A5A;
+    --color-secondary-text-c: #36353E;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+}
+
+html, body, #app {
+    height: 100%;
+}
+
+body {
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    font-size: 16px;
+    font-family: "Readex Pro", sans-serif;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+}
+
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+}
+
+input, button, textarea, select {
+    font: inherit;
+}
+
+@media (min-width: 1700px) {
+    :root {
+        font-size: 16px;
+    }
+}
