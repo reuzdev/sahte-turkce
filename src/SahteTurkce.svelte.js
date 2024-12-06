@@ -1,5 +1,3 @@
-// TODO: Word.svelte style'ları düzelt lan
-
 import ngramTargetProbs from "./data/model.json"
 import stats from "./data/stats.json"
 
