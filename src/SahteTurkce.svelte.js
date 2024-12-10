@@ -34,27 +34,6 @@ function selectTraget(ngram) {
     return END_CHAR;
 }
 
-function selectTragetO(ngram) {
-    const targetRate = Math.random();
-
-    for (let i = Math.min(NGRAM_SIZE, ngram.length); i > 0; i--) {
-        if (!(ngram in ngramTargetProbs))
-            continue;
-
-        let completedRate = 0;
-        const candidateRates = ngramTargetProbs[ngram];
-        for (const candidate in candidateRates) {
-            completedRate += candidateRates[candidate];
-            if (completedRate > targetRate)
-                return candidate;
-        }
-
-        ngram = ngram.slice(1);
-    }
-
-    return END_CHAR;
-}
-
 export function extendWord() {
     if (global.word.length >= 120)
         return;
