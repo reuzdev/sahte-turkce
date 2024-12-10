@@ -1,6 +1,6 @@
 <script>
     import InfoPanel from "./InfoPanel.svelte";
-    import { global, wordProbabilities, NGRAM_SIZE, WORD_COUNT } from "../SahteTurkce.svelte";
+    import { global, wordProbabilities, NGRAM_SIZE, WORD_COUNT, START_CHAR, END_CHAR } from "../SahteTurkce.svelte";
     import ngramTargetProbs from "../data/model.json";
 
     let rankSectionData = $derived(createRankSectionData(global.word));
@@ -36,7 +36,7 @@
     }
 
     function calculateProbability(word) {
-        word = Array.from({length: NGRAM_SIZE}, (_, i) => NGRAM_SIZE - 1 - i).join('') + word + ".";
+        word = START_CHAR + word + END_CHAR;
         let probability = 1;
 
         for (let i = 0; i < word.length - NGRAM_SIZE; i++) {

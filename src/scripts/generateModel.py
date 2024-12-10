@@ -1,8 +1,9 @@
 from json import dumps as to_json_str
-from random import random
 from sortedcollections import ValueSortedDict
 from sys import path
-from hashlib import sha256
+
+START_CHAR = '('
+END_CHAR = ')'
 
 NGRAM_SIZE = 3
 SCRIPTS_DIR = path[0] + '\\';
@@ -12,7 +13,7 @@ ngram_target_probabilities: dict[str, dict[str, float]] = {}    # ngram -> {targ
 word_probabilities: dict[str, float] = ValueSortedDict()        # word -> total probability
 
 def register_transitions(word, ngram_size):
-    word = ''.join([str(i - 1) for i in range(ngram_size, 0, -1)]) + word + '.'
+    word = START_CHAR + word + END_CHAR
     for i in range(len(word) - ngram_size):
         ngram = word[i:i+ngram_size]
         target = word[i+ngram_size]
@@ -38,7 +39,7 @@ def calc_trans_probabilities():
         ngram_target_probabilities[ngram][target] = probability
 
 def calc_word_prob(word):
-    padded_word = ''.join([str(i - 1) for i in range(NGRAM_SIZE, 0, -1)]) + word + '.'
+    padded_word = START_CHAR + word + END_CHAR
     probability = 1
     for i in range(len(padded_word) - NGRAM_SIZE):
         full_ngram = padded_word[i:i+NGRAM_SIZE]
@@ -50,23 +51,6 @@ def calc_word_prob(word):
                 probability *= ngram_target_probabilities[ngram][target]
                 break
     word_probabilities[word] = probability
-
-def select_target(full_ngram):
-    select = random()
-    completed_rate = 0
-
-    for i in range(NGRAM_SIZE, 0, -1):
-        ngram = full_ngram[-i:]
-        if ngram not in ngram_target_probabilities:
-            continue
-        space = ngram_target_probabilities[ngram]
-
-        for target, probability in space.items():
-            if completed_rate + probability > select:
-                return target
-            completed_rate += probability
-
-    return '.'
 
 if __name__ == '__main__':
     f = open(f'{SCRIPTS_DIR}/../data/words.txt', 'r', encoding='utf-8')
