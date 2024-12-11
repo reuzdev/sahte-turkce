@@ -6,8 +6,8 @@ export const global = $state({
     savedWords: [],
 });
 
-export const START_CHAR = "("
-export const END_CHAR = ")"
+export const START_CHAR = "(";
+export const END_CHAR = ")";
 export const VOWELS = "aeıioöuü";
 export const NGRAM_SIZE = stats.ngramSize;
 export const WORD_COUNT = stats.wordCount;
