@@ -1,13 +1,10 @@
 <script>
-    import { global, VOWELS } from "../SahteTurkce.svelte";
+    import { global, VOWELS, VOWELS_BACK, VOWELS_FRONT } from "../SahteTurkce.svelte";
     import InfoPanel from "./InfoPanel.svelte";
 
-    const BACK_VOWELS = "aıou";
-    const FRONT_VOWELS = "eiöü";
-
-    const UNROUNDED_VOWELS = "aeıi";
-    const ROUNDED_VOWELS = "oöuü";
-    const CAN_FOLLOW_ROUNDED_VOWELS = "aeuü";
+    const VOWELS_UNROUNDED = "aeıi";
+    const VOWELS_ROUNDED = "oöuü";
+    const VOWELS_CAN_FOLLOW_ROUNDED = "aeuü";
 
     let hasPalatalHarmony = $derived(checkPalatalHarmony(global.word));
     let palatalHarmonyNotation = $derived(generatePalatalHarmonyNotation(global.word));
@@ -19,9 +16,9 @@
         let foundFrontVowel = false;
 
         for (const c of word) {
-            if (BACK_VOWELS.includes(c))
+            if (VOWELS_BACK.includes(c))
                 foundBackVowel = true;
-            if (FRONT_VOWELS.includes(c))
+            if (VOWELS_FRONT.includes(c))
                 foundFrontVowel = true;
         }
 
@@ -33,9 +30,9 @@
         let frontVowels = "";
 
         for (const c of word) {
-            if (BACK_VOWELS.includes(c) && !backVowels.includes(c))
+            if (VOWELS_BACK.includes(c) && !backVowels.includes(c))
                 backVowels += c;
-            if (FRONT_VOWELS.includes(c) && !frontVowels.includes(c))
+            if (VOWELS_FRONT.includes(c) && !frontVowels.includes(c))
                 frontVowels += c;
         }
 
@@ -55,8 +52,8 @@
                 continue;
             }
 
-            const isIllegal = (UNROUNDED_VOWELS.includes(lastVowel) && !UNROUNDED_VOWELS.includes(c))
-                           || (ROUNDED_VOWELS.includes(lastVowel) && !CAN_FOLLOW_ROUNDED_VOWELS.includes(c))
+            const isIllegal = (VOWELS_UNROUNDED.includes(lastVowel) && !VOWELS_UNROUNDED.includes(c))
+                           || (VOWELS_ROUNDED.includes(lastVowel) && !VOWELS_CAN_FOLLOW_ROUNDED.includes(c))
             if (isIllegal)
                 return false;
 
@@ -80,8 +77,8 @@
                 notation += c;
                 continue;
             }
-            const isIllegal = (UNROUNDED_VOWELS.includes(lastVowel) && !UNROUNDED_VOWELS.includes(c))
-                           || (ROUNDED_VOWELS.includes(lastVowel) && !CAN_FOLLOW_ROUNDED_VOWELS.includes(c));
+            const isIllegal = (VOWELS_UNROUNDED.includes(lastVowel) && !VOWELS_UNROUNDED.includes(c))
+                           || (VOWELS_ROUNDED.includes(lastVowel) && !VOWELS_CAN_FOLLOW_ROUNDED.includes(c));
             if (isIllegal)
                 notation += "/";
             notation += c;

@@ -1,14 +1,14 @@
 <script>
     import InfoPanel from "./InfoPanel.svelte";
-    import { global, wordProbabilities, NGRAM_SIZE, WORD_COUNT, START_CHAR, END_CHAR } from "../SahteTurkce.svelte";
+    import { global, wordProbabilities, NGRAM_SIZE, WORD_COUNT, CHAR_BEGINNING, CHAR_ENDING } from "../SahteTurkce.svelte";
     import ngramTargetProbs from "../data/model.json";
 
-    let rankSectionData = $derived(createRankSectionData(global.word));
-    let rankAsRatio = $derived(findRank(calculateProbability(global.word)) / WORD_COUNT);
+    let rankSectionData = $derived(createRankSectionData(global.rawWord, global.word));
+    let rankAsRatio = $derived(findRank(calculateProbability(global.rawWord)) / WORD_COUNT);
 
-    function createRankSectionData(focusWord) {
+    function createRankSectionData(focusWordRaw, focusWord) {
         const datas = [];
-        let focusProbability = calculateProbability(focusWord);
+        let focusProbability = calculateProbability(focusWordRaw);
         let focusRank = findRank(focusProbability);
         const bottomIndex = focusRank - 2;
         const topIndex = bottomIndex + 1;
@@ -36,7 +36,7 @@
     }
 
     function calculateProbability(word) {
-        word = START_CHAR + word + END_CHAR;
+        word = CHAR_BEGINNING + word + CHAR_ENDING;
         let probability = 1;
 
         for (let i = 0; i < word.length - NGRAM_SIZE; i++) {

@@ -2,8 +2,28 @@ from json import dumps as to_json_str
 from sortedcollections import ValueSortedDict
 from sys import path
 
-START_CHAR = '('
-END_CHAR = ')'
+CHAR_STARTING = '('
+CHAR_ENDING = ')'
+
+CHAR_A_VARIANT = 'A'
+CHAR_I_VARIANT = 'I'
+CHAR_O_VARIANT = 'O'
+CHAR_U_VARIANT = 'U'
+
+VOWELS = 'aeıioöuü'
+VOWELS_BACK = 'aıou'
+VOWELS_FRONT = 'eiöü'
+
+vowel_to_variant = {
+    'a': CHAR_A_VARIANT,
+    'e': CHAR_A_VARIANT,
+    'ı': CHAR_I_VARIANT,
+    'i': CHAR_I_VARIANT,
+    'o': CHAR_O_VARIANT,
+    'ö': CHAR_O_VARIANT,
+    'u': CHAR_U_VARIANT,
+    'ü': CHAR_U_VARIANT,
+}
 
 NGRAM_SIZE = 3
 SCRIPTS_DIR = path[0] + '\\';
@@ -13,12 +33,25 @@ ngram_target_probabilities: dict[str, dict[str, float]] = {}    # ngram -> {targ
 word_probabilities: dict[str, float] = ValueSortedDict()        # word -> total probability
 
 def register_transitions(word, ngram_size):
-    word = START_CHAR + word + END_CHAR
+    word = CHAR_STARTING + word + CHAR_ENDING
+    last_vowel = ''
+
     for i in range(len(word) - ngram_size):
         ngram = word[i:i+ngram_size]
         target = word[i+ngram_size]
-        transition = (ngram, target)
+        contains_vowels = False
 
+        for c in ngram:
+            if c in VOWELS:
+                last_vowel = c
+                contains_vowels = True
+
+        if not contains_vowels and last_vowel != '' and target in VOWELS:
+            in_harmony = (last_vowel in VOWELS_BACK) == (target in VOWELS_BACK)
+            if in_harmony:
+                target = vowel_to_variant[target]
+
+        transition = (ngram, target)
         if ngram not in ngram_occurrences:
             ngram_occurrences[ngram] = 1
         else:
@@ -39,17 +72,27 @@ def calc_trans_probabilities():
         ngram_target_probabilities[ngram][target] = probability
 
 def calc_word_prob(word):
-    padded_word = START_CHAR + word + END_CHAR
+    padded_word = CHAR_STARTING + word + CHAR_ENDING
     probability = 1
-    for i in range(len(padded_word) - NGRAM_SIZE):
-        full_ngram = padded_word[i:i+NGRAM_SIZE]
-        target = padded_word[i+NGRAM_SIZE]
+    last_vowel = ''
 
-        for off in range(NGRAM_SIZE):
-            ngram = full_ngram[off:]
-            if ngram in ngram_target_probabilities:
-                probability *= ngram_target_probabilities[ngram][target]
-                break
+    for i in range(len(padded_word) - NGRAM_SIZE):
+        ngram = padded_word[i:i+NGRAM_SIZE]
+        target = padded_word[i+NGRAM_SIZE]
+        contains_vowel = False
+
+        for c in ngram:
+            if c in VOWELS:
+                last_vowel = c
+                contains_vowel = True
+
+        if not contains_vowel and last_vowel != '' and target in VOWELS:
+            in_harmony = (last_vowel in VOWELS_BACK) == (target in VOWELS_BACK)
+            if in_harmony:
+                target = vowel_to_variant[target]
+
+        probability *= ngram_target_probabilities[ngram][target]
+
     word_probabilities[word] = probability
 
 if __name__ == '__main__':

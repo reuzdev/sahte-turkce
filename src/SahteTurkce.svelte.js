@@ -2,16 +2,40 @@ import ngramTargetProbs from "./data/model.json"
 import stats from "./data/stats.json"
 
 export const global = $state({
+    rawWord: "",
     word: "",
     savedWords: [],
 });
 
-export const START_CHAR = "(";
-export const END_CHAR = ")";
+export const CHAR_A_VARIANT = "A";
+export const CHAR_I_VARIANT = "I";
+export const CHAR_O_VARIANT = "O";
+export const CHAR_U_VARIANT = "U";
+export const CHAR_BEGINNING = "(";
+export const CHAR_ENDING = ")";
+
 export const VOWELS = "aeıioöuü";
+export const VOWELS_BACK = "aıou";
+export const VOWELS_FRONT = "eiöü";
+
 export const NGRAM_SIZE = stats.ngramSize;
 export const WORD_COUNT = stats.wordCount;
 export const wordProbabilities = stats.wordProbabilities;
+
+const variantToVowels = new Map([
+    [CHAR_A_VARIANT, "ae"],
+    [CHAR_I_VARIANT, "ıi"],
+    [CHAR_O_VARIANT, "oö"],
+    [CHAR_U_VARIANT, "uü"],
+]);
+
+function finalizeTarget(lastVowel, rawTarget) {
+    if (!variantToVowels.has(rawTarget))
+        return rawTarget;
+    const candidates = variantToVowels.get(rawTarget);
+    return VOWELS_BACK.includes(lastVowel) ? candidates[0] : candidates[1];
+
+}
 
 function selectTraget(ngram) {
     const targetRate = Math.random();
@@ -31,22 +55,29 @@ function selectTraget(ngram) {
         }
     }
 
-    return END_CHAR;
+    return CHAR_ENDING;
 }
 
 export function extendWord() {
     if (global.word.length >= 120)
         return;
 
-    const word = (START_CHAR + global.word).slice(-NGRAM_SIZE);
-    const ngram = word.slice(-NGRAM_SIZE);
+    const ngram = (CHAR_BEGINNING + global.word).slice(-NGRAM_SIZE);
     const targetRate = Math.random();
+    let lastVowel = VOWELS[Math.floor(Math.random() * VOWELS.length)]
 
-    for (let i = 0; i < Math.min(NGRAM_SIZE, word.length); i++) {
+    for (let i = global.word.length - 1; i >= 0; i--) {
+        if (VOWELS.includes(global.word[i])) {
+            lastVowel = global.word[i];
+            break;
+        }
+    }
+
+    for (let i = 0; i < Math.min(NGRAM_SIZE, ngram.length); i++) {
         const candidateRates = ngramTargetProbs[ngram];
         let totalRate = 1;
-        if (END_CHAR in candidateRates) {
-            const endRate = candidateRates[END_CHAR];
+        if (CHAR_ENDING in candidateRates) {
+            const endRate = candidateRates[CHAR_ENDING];
             if (endRate == 1)
                 continue;
             totalRate -= endRate;
@@ -54,12 +85,15 @@ export function extendWord() {
 
         let completedRate = 0;
         for (const candidate in candidateRates) {
-            if (candidate == END_CHAR)
+            if (candidate == CHAR_ENDING)
                 continue;
 
             completedRate += candidateRates[candidate] / totalRate;
             if (completedRate > targetRate) {
-                global.word += candidate;
+                const rawTarget = candidate;
+                const target = finalizeTarget(lastVowel, rawTarget);
+                global.word += target;
+                global.rawWord += rawTarget;
                 return;
             }
         }
@@ -67,46 +101,31 @@ export function extendWord() {
 }
 
 export function generateWord() {
-    let word = START_CHAR;
+    let word = CHAR_BEGINNING;
+    let rawWord = word;
+    let lastVowel = VOWELS[Math.floor(Math.random() * VOWELS.length)];
 
     while (true) {
         const ngram = word.slice(-NGRAM_SIZE);
-        const target = selectTraget(ngram);
+        let rawTarget = selectTraget(ngram);
+        let target = finalizeTarget(lastVowel, rawTarget);
 
-        if (target == END_CHAR) {
+        if (rawTarget == CHAR_ENDING) {
             if (wordProbabilities.find(wordData => wordData[0] == word.slice(1)) !== undefined) {
-                word = START_CHAR;
+                word = CHAR_BEGINNING;
+                rawWord = word;
                 continue;
             }
             else {
                 global.word = word.slice(1);
+                global.rawWord = rawWord.slice(1);
                 break;
             }
         }
 
+        if (VOWELS.includes(target))
+            lastVowel = target;
         word += target;
-    }
-}
-
-export function generateWordOLD() {
-    const prefixNgram = Array.from({length: NGRAM_SIZE}, (_, i) => NGRAM_SIZE - 1 - i).join('');
-    let ngram = prefixNgram;
-    let currWord = "";
-
-    while (true) {
-        let target = selectTraget(ngram);
-        if (target == '.') {
-            if (wordProbabilities.find(pair => pair[0] == currWord) !== undefined) {
-                ngram = prefixNgram;
-                currWord = "";
-                continue;
-            }
-            else {
-                global.word = currWord;
-                break;
-            }
-        }
-        currWord += target;
-        ngram = ngram.slice(1) + target;
+        rawWord += rawTarget;
     }
 }
