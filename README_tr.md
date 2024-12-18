@@ -18,10 +18,10 @@ Sahte Türkçe kulağa Türkçe gelen sahte kelimeler oluşturmaya yarayan bir w
 - Sorted Collections (`pip install sortedcollections`)
 
 ### Hızlı Başlangıç
-- `npm install` - Repo'yu klonladıktan sonra bir kez yapın.
+- `npm install` - Repoyu klonladıktan sonra bağımlılıkları indirmek için bir kez çalıştırın.
 - `npm run model-gen` - Model ve istatistikleri oluşturun.
-- `npm run dev` - Sıcak geriyüklemeli (hot-reloading) geliştirici sunucusu çalıştırın.
+- `npm run dev` - Hot-reloading destekli geliştirme sunucusunu çalıştırın.
 - `npm run build` - Projeyi derleyin.
 
 ## Nasıl Çalışır
-Gerçek kelime listesindeki tüm kelimeler gezilerek bir model oluşturulur. Bu model önceki belirli sayıdaki harfin oluşturduğu kombinasyonlardan sonra gelebilecek harflerin olasılığıyla ilgili bilgi içerir. Daha sonra bu bilgi oluşturucu tarafından gerçek kelimelerde bulunabilecek harf kombinasyonları bulmak için kullanılır.
+Oluşturulmakta olan kelimenin son üç harflik bölümüne bakılır. Bu bölümü bulunduran gerçek Türkçe kelimelerde bu bölümden sonra gelen harflerden biri, veya kelimenin sonunu ifade eden ")" karakteri, gelme sıklıklarına göre seçilir. Seçilen karakter ")" olana dek bu işlem yinelenir.
